@@ -34,6 +34,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import androidx.glance.unit.dp
 import coil.compose.AsyncImage
 import com.lionido.simplewidget.MainActivity
 import com.lionido.simplewidget.R
@@ -42,6 +43,7 @@ import com.lionido.simplewidget.data.WidgetRepository
 import com.lionido.simplewidget.data.WidgetType
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import android.content.Intent
 
 class DayCounterWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact
@@ -51,8 +53,10 @@ class DayCounterWidget : GlanceAppWidget() {
         // 获取widget ID
         val widgetId = id.toString().hashCode()
         
+        // Get widget data outside of composable scope
+        val widget = repository.getWidget(widgetId)
+        
         provideContent {
-            val widget = repository.getWidget(widgetId)
             if (widget != null && widget.type == WidgetType.DAY_COUNTER) {
                 DayCounterWidgetContent(widget)
             } else {
@@ -61,7 +65,7 @@ class DayCounterWidget : GlanceAppWidget() {
                     modifier = GlanceModifier
                         .fillMaxSize()
                         .background(ColorProvider(Color(0xFF6200EE)))
-                        .clickable(actionStartActivity<MainActivity>()),
+                        .clickable(actionStartActivity(Intent(context, MainActivity::class.java))),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -92,7 +96,7 @@ fun DayCounterWidgetContent(widget: WidgetData) {
                     ColorProvider(Color(widget.backgroundColor))
                 }
             )
-            .clickable(actionStartActivity<MainActivity>()),
+            .clickable(actionStartActivity(Intent(context, MainActivity::class.java))),
         contentAlignment = Alignment.Center
     ) {
         // 显示背景图片（如果有）
@@ -135,6 +139,17 @@ fun DayCounterWidgetContent(widget: WidgetData) {
                 )
             }
         }
+    }
+}
+
+private fun calculateDays(startDate: String, startFromZero: Boolean): Long {
+    return try {
+        val start = LocalDate.parse(startDate)
+        val today = LocalDate.now()
+        val days = ChronoUnit.DAYS.between(start, today)
+        if (startFromZero) days else days + 1
+    } catch (e: Exception) {
+        0L
     }
 }
 
