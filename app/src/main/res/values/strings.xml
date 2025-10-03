@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Simple Widget</string>
+    <string name="day_counter_widget_description">天数计数器小部件</string>
+    <string name="photo_widget_description">照片小部件</string>
 </resources>
