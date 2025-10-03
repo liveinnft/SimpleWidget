@@ -34,7 +34,6 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import androidx.glance.unit.dp
 import coil.compose.AsyncImage
 import com.lionido.simplewidget.MainActivity
 import com.lionido.simplewidget.R
@@ -117,13 +116,13 @@ fun DayCounterWidgetContent(widget: WidgetData) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                modifier = GlanceModifier.padding(bottom = 8.dp)
+                modifier = GlanceModifier.padding(bottom = 8)
             )
             
             if (widget.startDate != null) {
                 val days = calculateDays(widget.startDate, widget.startFromZero)
                 Text(
-                    text = "$days",
+                    text = days.toString(),
                     style = TextStyle(
                         color = ColorProvider(Color.White),
                         fontSize = 32.sp,
