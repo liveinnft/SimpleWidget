@@ -53,8 +53,10 @@ class DayCounterWidget : GlanceAppWidget() {
         // 获取widget ID
         val widgetId = id.toString().hashCode()
         
+        // Get widget data outside of composable scope
+        val widget = repository.getWidget(widgetId)
+        
         provideContent {
-            val widget = repository.getWidget(widgetId)
             if (widget != null && widget.type == WidgetType.DAY_COUNTER) {
                 DayCounterWidgetContent(widget)
             } else {
