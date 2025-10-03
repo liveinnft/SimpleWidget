@@ -120,9 +120,10 @@ fun DayCounterWidgetContent(widget: WidgetData) {
             )
             
             if (widget.startDate != null) {
-                val days = calculateDays(widget.startDate, widget.startFromZero)
+                val days = calculateDaysFromString(widget.startDate, widget.startFromZero)
+                val daysText = days.toString()
                 Text(
-                    text = "$days",
+                    text = daysText,
                     style = TextStyle(
                         color = ColorProvider(Color.White),
                         fontSize = 32.sp,
@@ -141,7 +142,7 @@ fun DayCounterWidgetContent(widget: WidgetData) {
     }
 }
 
-private fun calculateDays(startDate: String, startFromZero: Boolean): Long {
+private fun calculateDaysFromString(startDate: String, startFromZero: Boolean): Long {
     return try {
         val start = LocalDate.parse(startDate)
         val today = LocalDate.now()
