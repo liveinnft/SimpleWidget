@@ -122,7 +122,7 @@ fun DayCounterWidgetContent(widget: WidgetData) {
             if (widget.startDate != null) {
                 val days = calculateDays(widget.startDate, widget.startFromZero)
                 Text(
-                    text = days.toString(),
+                    text = "$days",
                     style = TextStyle(
                         color = ColorProvider(Color.White),
                         fontSize = 32.sp,
