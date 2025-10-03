@@ -34,7 +34,6 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import androidx.glance.unit.dp
 import coil.compose.AsyncImage
 import com.lionido.simplewidget.MainActivity
 import com.lionido.simplewidget.R
@@ -117,13 +116,13 @@ fun DayCounterWidgetContent(widget: WidgetData) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                modifier = GlanceModifier.padding(bottom = 8.dp)
+                modifier = GlanceModifier.padding(bottom = 8)
             )
             
             if (widget.startDate != null) {
                 val days = calculateDaysFromString(widget.startDate, widget.startFromZero)
                 Text(
-                    text = days.toString(),
+                    text = days,
                     style = TextStyle(
                         color = ColorProvider(Color.White),
                         fontSize = 32.sp,
@@ -142,14 +141,15 @@ fun DayCounterWidgetContent(widget: WidgetData) {
     }
 }
 
-private fun calculateDaysFromString(startDate: String, startFromZero: Boolean): Long {
+private fun calculateDaysFromString(startDate: String, startFromZero: Boolean): String {
     return try {
         val start = LocalDate.parse(startDate)
         val today = LocalDate.now()
         val days = ChronoUnit.DAYS.between(start, today)
-        if (startFromZero) days else days + 1
+        val result = if (startFromZero) days else days + 1
+        result.toString()
     } catch (e: Exception) {
-        0L
+        "0"
     }
 }
 
