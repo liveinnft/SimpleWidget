@@ -120,7 +120,7 @@ fun DayCounterWidgetContent(widget: WidgetData) {
             )
             
             if (widget.startDate != null) {
-                val days: String = calculateDaysFromString(widget.startDate, widget.startFromZero)
+                val days: String = calculateDaysFromTimestamp(widget.startDate, widget.startFromZero)
                 Text(
                     text = days,
                     style = TextStyle(
@@ -141,9 +141,9 @@ fun DayCounterWidgetContent(widget: WidgetData) {
     }
 }
 
-private fun calculateDaysFromString(startDate: String, startFromZero: Boolean): String {
+private fun calculateDaysFromTimestamp(startDate: Long, startFromZero: Boolean): String {
     return try {
-        val start = LocalDate.parse(startDate)
+        val start = LocalDate.ofEpochDay(startDate)
         val today = LocalDate.now()
         val days = ChronoUnit.DAYS.between(start, today)
         val result = if (startFromZero) days else days + 1
