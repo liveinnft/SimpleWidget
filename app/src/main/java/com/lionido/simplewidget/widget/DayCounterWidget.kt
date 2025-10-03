@@ -117,13 +117,13 @@ fun DayCounterWidgetContent(widget: WidgetData) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                modifier = GlanceModifier.padding(bottom = 8.dp)
+                modifier = GlanceModifier.padding(bottom = 8)
             )
             
             if (widget.startDate != null) {
                 val days = calculateDays(widget.startDate, widget.startFromZero)
                 Text(
-                    text = "$days",
+                    text = days.toString(),
                     style = TextStyle(
                         color = ColorProvider(Color.White),
                         fontSize = 32.sp,
