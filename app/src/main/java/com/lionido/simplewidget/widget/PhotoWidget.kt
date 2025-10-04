@@ -19,6 +19,9 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import java.io.File
 import com.lionido.simplewidget.data.WidgetRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -65,7 +68,7 @@ class PhotoWidget : GlanceAppWidget() {
                 PhotoWidgetContent(
                     title = widgetData.title,
                     backgroundColor = Color(widgetData.backgroundColor),
-                    hasImage = widgetData.imageUri != null,
+                    imageUri = widgetData.imageUri,
                     configIntent = configIntent
                 )
             } else {
@@ -80,7 +83,7 @@ class PhotoWidget : GlanceAppWidget() {
 private fun PhotoWidgetContent(
     title: String,
     backgroundColor: Color,
-    hasImage: Boolean,
+    imageUri: String?,
     configIntent: Intent
 ) {
     Box(
@@ -89,7 +92,23 @@ private fun PhotoWidgetContent(
             .background(ColorProvider(backgroundColor))
             .clickable(actionStartActivity(configIntent))
     ) {
-        // Заголовок поверх фона
+        // Если есть изображение, показываем его
+        if (imageUri != null) {
+            try {
+                val file = File(imageUri)
+                if (file.exists()) {
+                    Image(
+                        provider = ImageProvider(file),
+                        contentDescription = null,
+                        modifier = GlanceModifier.fillMaxSize()
+                    )
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("PhotoWidget", "Error loading image: $imageUri", e)
+            }
+        }
+
+        // Заголовок поверх фона/изображения
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
@@ -107,7 +126,7 @@ private fun PhotoWidgetContent(
         }
 
         // Если нет изображения, показываем подсказку
-        if (!hasImage) {
+        if (imageUri == null) {
             Box(
                 modifier = GlanceModifier
                     .fillMaxSize()

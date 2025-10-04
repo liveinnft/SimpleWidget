@@ -125,7 +125,8 @@ fun MainScreen() {
                             val newWidget = WidgetData(
                                 id = System.currentTimeMillis().toInt(),
                                 type = type,
-                                title = if (type == WidgetType.DAY_COUNTER) "Счетчик дней" else "Фото"
+                                title = if (type == WidgetType.DAY_COUNTER) "Счетчик дней" else "Фото",
+                                backgroundColor = 0xFF6200EE // Фиолетовый цвет по умолчанию
                             )
                             repository.addWidget(newWidget)
                             showDialog = false
