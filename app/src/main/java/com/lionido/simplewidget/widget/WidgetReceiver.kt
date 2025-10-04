@@ -16,11 +16,19 @@ class WidgetReceiver : GlanceAppWidgetReceiver() {
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
 
-        val repository = WidgetRepository(context)
-        CoroutineScope(Dispatchers.IO).launch {
-            appWidgetIds.forEach { widgetId ->
-                repository.unlinkSystemWidget(widgetId.toString())
+        try {
+            val repository = WidgetRepository(context)
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    appWidgetIds.forEach { widgetId ->
+                        repository.unlinkSystemWidget(widgetId.toString())
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
@@ -32,11 +40,19 @@ class PhotoWidgetReceiver : GlanceAppWidgetReceiver() {
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
 
-        val repository = WidgetRepository(context)
-        CoroutineScope(Dispatchers.IO).launch {
-            appWidgetIds.forEach { widgetId ->
-                repository.unlinkSystemWidget(widgetId.toString())
+        try {
+            val repository = WidgetRepository(context)
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    appWidgetIds.forEach { widgetId ->
+                        repository.unlinkSystemWidget(widgetId.toString())
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

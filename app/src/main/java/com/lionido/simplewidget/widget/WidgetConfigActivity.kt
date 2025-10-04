@@ -39,31 +39,42 @@ class WidgetConfigActivity : ComponentActivity() {
         // Устанавливаем результат по умолчанию как CANCELED
         setResult(RESULT_CANCELED)
 
-        // Получаем ID виджета из intent
-        appWidgetId = intent?.extras?.getInt(
-            AppWidgetManager.EXTRA_APPWIDGET_ID,
-            AppWidgetManager.INVALID_APPWIDGET_ID
-        ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+        try {
+            // Получаем ID виджета из intent
+            appWidgetId = intent?.extras?.getInt(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID
+            ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
-        // Определяем тип виджета по имени класса в ComponentName
-        val componentName = intent?.component?.className
-        widgetType = when {
-            componentName?.contains("WidgetReceiver") == true -> WidgetType.DAY_COUNTER
-            componentName?.contains("PhotoWidgetReceiver") == true -> WidgetType.PHOTO
-            else -> {
-                // Пробуем получить из AppWidgetManager
-                val appWidgetManager = AppWidgetManager.getInstance(this)
-                val info = appWidgetManager.getAppWidgetInfo(appWidgetId)
-                when {
-                    info?.provider?.className?.contains("WidgetReceiver") == true -> WidgetType.DAY_COUNTER
-                    info?.provider?.className?.contains("PhotoWidgetReceiver") == true -> WidgetType.PHOTO
-                    else -> null
+            // Определяем тип виджета по имени класса в ComponentName
+            val componentName = intent?.component?.className
+            widgetType = when {
+                componentName?.contains("WidgetReceiver") == true -> WidgetType.DAY_COUNTER
+                componentName?.contains("PhotoWidgetReceiver") == true -> WidgetType.PHOTO
+                else -> {
+                    // Пробуем получить из AppWidgetManager
+                    try {
+                        val appWidgetManager = AppWidgetManager.getInstance(this)
+                        val info = appWidgetManager.getAppWidgetInfo(appWidgetId)
+                        when {
+                            info?.provider?.className?.contains("WidgetReceiver") == true -> WidgetType.DAY_COUNTER
+                            info?.provider?.className?.contains("PhotoWidgetReceiver") == true -> WidgetType.PHOTO
+                            else -> null
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        null
+                    }
                 }
             }
-        }
 
-        // Если ID невалидный, закрываем активность
-        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            // Если ID невалидный, закрываем активность
+            if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+                finish()
+                return
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
             finish()
             return
         }
@@ -87,30 +98,38 @@ class WidgetConfigActivity : ComponentActivity() {
     private fun linkWidgetAndFinish(widget: WidgetData) {
         val scope = kotlinx.coroutines.MainScope()
         scope.launch {
-            val repository = WidgetRepository(this@WidgetConfigActivity)
-
-            // Связываем виджет с системным ID
-            repository.updateWidgetWithSystemId(widget.id, appWidgetId)
-
-            // Обновляем виджет
             try {
-                val glanceId = GlanceAppWidgetManager(this@WidgetConfigActivity)
-                    .getGlanceIdBy(appWidgetId)
+                val repository = WidgetRepository(this@WidgetConfigActivity)
 
-                when (widget.type) {
-                    WidgetType.DAY_COUNTER -> DayCounterWidget().update(this@WidgetConfigActivity, glanceId)
-                    WidgetType.PHOTO -> PhotoWidget().update(this@WidgetConfigActivity, glanceId)
+                // Связываем виджет с системным ID
+                repository.updateWidgetWithSystemId(widget.id, appWidgetId)
+
+                // Обновляем виджет
+                try {
+                    val glanceId = GlanceAppWidgetManager(this@WidgetConfigActivity)
+                        .getGlanceIdBy(appWidgetId)
+
+                    when (widget.type) {
+                        WidgetType.DAY_COUNTER -> DayCounterWidget().update(this@WidgetConfigActivity, glanceId)
+                        WidgetType.PHOTO -> PhotoWidget().update(this@WidgetConfigActivity, glanceId)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    // Продолжаем выполнение даже если обновление виджета не удалось
                 }
+
+                // Устанавливаем результат OK
+                val resultValue = Intent().apply {
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                }
+                setResult(RESULT_OK, resultValue)
             } catch (e: Exception) {
                 e.printStackTrace()
+                // В случае ошибки устанавливаем результат CANCELED
+                setResult(RESULT_CANCELED)
+            } finally {
+                finish()
             }
-
-            // Устанавливаем результат OK
-            val resultValue = Intent().apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
-            setResult(RESULT_OK, resultValue)
-            finish()
         }
     }
 }
