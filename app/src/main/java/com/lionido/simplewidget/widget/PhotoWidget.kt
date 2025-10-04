@@ -29,6 +29,22 @@ import kotlinx.coroutines.withContext
 
 class PhotoWidget : GlanceAppWidget() {
 
+    private fun getWidgetSize(context: Context, systemId: Int): String {
+        return try {
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val appWidgetInfo = appWidgetManager.getAppWidgetInfo(systemId)
+            val providerClassName = appWidgetInfo?.provider?.className ?: ""
+            
+            when {
+                providerClassName.contains("Small") -> "small"
+                providerClassName.contains("Large") -> "large"
+                else -> "medium"
+            }
+        } catch (e: Exception) {
+            "medium" // По умолчанию средний размер
+        }
+    }
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val repository = WidgetRepository(context)
         
@@ -66,11 +82,16 @@ class PhotoWidget : GlanceAppWidget() {
             android.util.Log.d("PhotoWidget", "WidgetData: $widgetData")
             if (widgetData != null) {
                 android.util.Log.d("PhotoWidget", "Title: ${widgetData.title}, ImageUri: ${widgetData.imageUri}")
+                
+                val widgetSize = getWidgetSize(context, systemId)
+                android.util.Log.d("PhotoWidget", "Widget size: $widgetSize")
+                
                 PhotoWidgetContent(
                     title = widgetData.title,
                     backgroundColor = Color(widgetData.backgroundColor),
                     imageUri = widgetData.imageUri,
-                    configIntent = configIntent
+                    configIntent = configIntent,
+                    widgetSize = widgetSize
                 )
             } else {
                 android.util.Log.d("PhotoWidget", "WidgetData is null, showing configuration prompt")
