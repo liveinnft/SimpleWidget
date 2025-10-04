@@ -27,8 +27,10 @@ import coil.compose.AsyncImage
 import com.lionido.simplewidget.data.WidgetData
 import com.lionido.simplewidget.data.WidgetSize
 import com.lionido.simplewidget.data.WidgetType
+import com.lionido.simplewidget.utils.ImageUtils
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,16 +49,24 @@ fun WidgetConfigScreen(
     var backgroundColor by remember { mutableStateOf(Color(widgetData.backgroundColor)) }
     var imageUri by remember { mutableStateOf(widgetData.imageUri) }
     var useImage by remember { mutableStateOf(widgetData.imageUri != null) }
-    var widgetSize by remember { mutableStateOf(widgetData.size) }
+    // Размер виджета больше не выбирается пользователем
     var showDatePicker by remember { mutableStateOf(false) }
     var showColorPicker by remember { mutableStateOf(false) }
 
+    val scope = rememberCoroutineScope()
+    val context = androidx.compose.ui.platform.LocalContext.current
+    
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            imageUri = it.toString()
-            useImage = true
+            scope.launch {
+                val savedPath = ImageUtils.saveImageToInternalStorage(context, it)
+                if (savedPath != null) {
+                    imageUri = savedPath
+                    useImage = true
+                }
+            }
         }
     }
 
@@ -78,8 +88,7 @@ fun WidgetConfigScreen(
                                     selectedDate.toEpochDay() else null,
                                 startFromZero = startFromZero,
                                 backgroundColor = backgroundColor.value.toLong(),
-                                imageUri = if (useImage) imageUri else null,
-                                size = widgetSize
+                                imageUri = if (useImage) imageUri else null
                             )
                             onSave(updated)
                         }
@@ -144,37 +153,6 @@ fun WidgetConfigScreen(
                 }
             }
 
-            // Выбор размера
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        "Размер виджета",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        WidgetSize.values().forEach { size ->
-                            FilterChip(
-                                selected = widgetSize == size,
-                                onClick = { widgetSize = size },
-                                label = { Text(size.name) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                }
-            }
 
             // Фон
             Card(
@@ -235,7 +213,7 @@ fun WidgetConfigScreen(
                                     .height(150.dp)
                             ) {
                                 AsyncImage(
-                                    model = uri,
+                                    model = ImageUtils.getImageUri(context, uri),
                                     contentDescription = null,
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Crop
@@ -255,7 +233,7 @@ fun WidgetConfigScreen(
             WidgetPreview(
                 title = title,
                 backgroundColor = backgroundColor,
-                imageUri = if (useImage) imageUri else null,
+                imageUri = if (useImage) imageUri?.let { ImageUtils.getImageUri(context, it) } else null,
                 showDays = widgetData.type == WidgetType.DAY_COUNTER,
                 days = if (widgetData.type == WidgetType.DAY_COUNTER) {
                     calculateDaysPreview(selectedDate, startFromZero)
@@ -309,7 +287,7 @@ fun WidgetConfigScreen(
 fun WidgetPreview(
     title: String,
     backgroundColor: Color,
-    imageUri: String?,
+    imageUri: Uri?,
     showDays: Boolean,
     days: Long
 ) {

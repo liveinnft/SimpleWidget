@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Simple Widget</string>
-    <string name="day_counter_widget_description">天数计数器小部件</string>
-    <string name="photo_widget_description">照片小部件</string>
+    <string name="day_counter_widget_description_small">天数计数器小部件 (小)</string>
+    <string name="day_counter_widget_description_medium">天数计数器小部件 (中)</string>
+    <string name="day_counter_widget_description_large">天数计数器小部件 (大)</string>
+    <string name="photo_widget_description_small">照片小部件 (小)</string>
+    <string name="photo_widget_description_medium">照片小部件 (中)</string>
+    <string name="photo_widget_description_large">照片小部件 (大)</string>
 </resources>

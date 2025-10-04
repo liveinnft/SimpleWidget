@@ -26,6 +26,7 @@ import com.lionido.simplewidget.data.WidgetData
 import com.lionido.simplewidget.data.WidgetRepository
 import com.lionido.simplewidget.data.WidgetType
 import com.lionido.simplewidget.ui.theme.SimpleWidgetTheme
+import com.lionido.simplewidget.utils.ImageUtils
 import kotlinx.coroutines.launch
 
 class WidgetConfigActivity : ComponentActivity() {
@@ -45,21 +46,13 @@ class WidgetConfigActivity : ComponentActivity() {
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
-        // Определяем тип виджета по имени класса в ComponentName
-        val componentName = intent?.component?.className
+        // Определяем тип виджета из AppWidgetManager
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val info = appWidgetManager.getAppWidgetInfo(appWidgetId)
         widgetType = when {
-            componentName?.contains("WidgetReceiver") == true -> WidgetType.DAY_COUNTER
-            componentName?.contains("PhotoWidgetReceiver") == true -> WidgetType.PHOTO
-            else -> {
-                // Пробуем получить из AppWidgetManager
-                val appWidgetManager = AppWidgetManager.getInstance(this)
-                val info = appWidgetManager.getAppWidgetInfo(appWidgetId)
-                when {
-                    info?.provider?.className?.contains("WidgetReceiver") == true -> WidgetType.DAY_COUNTER
-                    info?.provider?.className?.contains("PhotoWidgetReceiver") == true -> WidgetType.PHOTO
-                    else -> null
-                }
-            }
+            info?.provider?.className?.contains("DayCounterWidget") == true -> WidgetType.DAY_COUNTER
+            info?.provider?.className?.contains("PhotoWidget") == true -> WidgetType.PHOTO
+            else -> null
         }
 
         // Если ID невалидный, закрываем активность
@@ -232,7 +225,7 @@ fun WidgetSelectionCard(
             ) {
                 if (widget.imageUri != null) {
                     AsyncImage(
-                        model = widget.imageUri,
+                        model = ImageUtils.getImageUri(context, widget.imageUri),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
                     )

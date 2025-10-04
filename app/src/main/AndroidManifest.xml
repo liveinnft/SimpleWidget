@@ -35,28 +35,76 @@
             </intent-filter>
         </activity>
 
-        <!-- Счетчик дней -->
+        <!-- Счетчик дней - маленький -->
         <receiver
-            android:name=".widget.WidgetReceiver"
+            android:name=".widget.DayCounterWidgetSmall"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/day_counter_widget_info" />
+                android:resource="@xml/day_counter_widget_small" />
         </receiver>
 
-        <!-- Фото виджет -->
+        <!-- Счетчик дней - средний -->
         <receiver
-            android:name=".widget.PhotoWidgetReceiver"
+            android:name=".widget.DayCounterWidgetMedium"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/photo_widget_info" />
+                android:resource="@xml/day_counter_widget_medium" />
+        </receiver>
+
+        <!-- Счетчик дней - большой -->
+        <receiver
+            android:name=".widget.DayCounterWidgetLarge"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/day_counter_widget_large" />
+        </receiver>
+
+        <!-- Фото виджет - маленький -->
+        <receiver
+            android:name=".widget.PhotoWidgetSmall"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/photo_widget_small" />
+        </receiver>
+
+        <!-- Фото виджет - средний -->
+        <receiver
+            android:name=".widget.PhotoWidgetMedium"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/photo_widget_medium" />
+        </receiver>
+
+        <!-- Фото виджет - большой -->
+        <receiver
+            android:name=".widget.PhotoWidgetLarge"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/photo_widget_large" />
         </receiver>
     </application>
 

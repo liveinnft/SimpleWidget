@@ -1,5 +1,6 @@
 package com.lionido.simplewidget.widget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
@@ -28,12 +29,16 @@ class PhotoWidget : GlanceAppWidget() {
         val repository = WidgetRepository(context)
 
         val widgetData = withContext(Dispatchers.IO) {
-            repository.getWidgetBySystemId(id.toString())
+            // Получаем системный ID виджета
+            val appWidgetManager = android.appwidget.AppWidgetManager.getInstance(context)
+            val systemId = appWidgetManager.getAppWidgetId(id)
+            repository.getWidgetBySystemId(systemId.toString())
         }
 
         // Создаем intent для открытия конфигурации
         val configIntent = Intent(context, WidgetConfigActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetManager.getAppWidgetId(id))
         }
 
         provideContent {

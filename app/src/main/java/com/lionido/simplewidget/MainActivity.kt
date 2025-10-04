@@ -31,6 +31,7 @@ import com.lionido.simplewidget.data.WidgetRepository
 import com.lionido.simplewidget.data.WidgetType
 import com.lionido.simplewidget.ui.WidgetConfigScreen
 import com.lionido.simplewidget.ui.theme.SimpleWidgetTheme
+import com.lionido.simplewidget.utils.ImageUtils
 import com.lionido.simplewidget.widget.WidgetUpdater
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -169,7 +170,7 @@ fun WidgetCard(
             // Фон
             if (widget.imageUri != null) {
                 AsyncImage(
-                    model = widget.imageUri,
+                    model = ImageUtils.getImageUri(context, widget.imageUri),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
