@@ -35,6 +35,12 @@
             </intent-filter>
         </activity>
 
+        <!-- Активность редактирования фото -->
+        <activity
+            android:name=".ui.PhotoEditorActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+
         <!-- Счетчик дней - маленький -->
         <receiver
             android:name=".widget.DayCounterWidgetSmall"

@@ -56,17 +56,28 @@ fun WidgetConfigScreen(
     val scope = rememberCoroutineScope()
     val context = androidx.compose.ui.platform.LocalContext.current
     
+    val photoEditorLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val croppedImagePath = result.data?.getStringExtra(PhotoEditorActivity.RESULT_CROPPED_IMAGE)
+            croppedImagePath?.let {
+                imageUri = it
+                useImage = true
+            }
+        }
+    }
+    
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            scope.launch {
-                val savedPath = ImageUtils.saveImageToInternalStorage(context, it)
-                if (savedPath != null) {
-                    imageUri = savedPath
-                    useImage = true
-                }
+            // Открываем фоторедактор
+            val intent = android.content.Intent(context, PhotoEditorActivity::class.java).apply {
+                putExtra(PhotoEditorActivity.EXTRA_IMAGE_URI, it)
+                putExtra(PhotoEditorActivity.EXTRA_WIDGET_SIZE, "medium") // По умолчанию средний размер
             }
+            photoEditorLauncher.launch(intent)
         }
     }
 
