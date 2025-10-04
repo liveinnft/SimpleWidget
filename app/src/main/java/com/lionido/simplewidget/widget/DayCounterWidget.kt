@@ -34,11 +34,23 @@ class DayCounterWidget : GlanceAppWidget() {
         val glanceAppWidgetManager = androidx.glance.appwidget.GlanceAppWidgetManager(context)
         val systemId = glanceAppWidgetManager.getAppWidgetId(id)
         android.util.Log.d("DayCounterWidget", "GlanceId: $id, SystemId: $systemId")
+        
+        // Попробуем также использовать сам id как системный ID
+        val alternativeSystemId = id.toString()
+        android.util.Log.d("DayCounterWidget", "Alternative SystemId: $alternativeSystemId")
 
         val widgetData = withContext(Dispatchers.IO) {
             android.util.Log.d("DayCounterWidget", "Looking for widget with systemId: $systemId")
-            val widget = repository.getWidgetBySystemId(systemId.toString())
-            android.util.Log.d("DayCounterWidget", "Found widget: $widget")
+            var widget = repository.getWidgetBySystemId(systemId.toString())
+            android.util.Log.d("DayCounterWidget", "Found widget with systemId: $widget")
+            
+            // Если не найден, попробуем альтернативный ID
+            if (widget == null) {
+                android.util.Log.d("DayCounterWidget", "Trying alternative systemId: $alternativeSystemId")
+                widget = repository.getWidgetBySystemId(alternativeSystemId)
+                android.util.Log.d("DayCounterWidget", "Found widget with alternative systemId: $widget")
+            }
+            
             widget
         }
 
@@ -49,16 +61,25 @@ class DayCounterWidget : GlanceAppWidget() {
         }
 
         provideContent {
-            if (widgetData != null && widgetData.startDate != null) {
-                val days = calculateDays(widgetData.startDate, widgetData.startFromZero)
+            android.util.Log.d("DayCounterWidget", "WidgetData: $widgetData")
+            if (widgetData != null) {
+                android.util.Log.d("DayCounterWidget", "StartDate: ${widgetData.startDate}")
+                if (widgetData.startDate != null) {
+                    val days = calculateDays(widgetData.startDate, widgetData.startFromZero)
+                    android.util.Log.d("DayCounterWidget", "Calculated days: $days")
 
-                DayCounterContent(
-                    title = widgetData.title,
-                    days = days,
-                    backgroundColor = Color(widgetData.backgroundColor),
-                    configIntent = configIntent
-                )
+                    DayCounterContent(
+                        title = widgetData.title,
+                        days = days,
+                        backgroundColor = Color(widgetData.backgroundColor),
+                        configIntent = configIntent
+                    )
+                } else {
+                    android.util.Log.d("DayCounterWidget", "StartDate is null, showing empty content")
+                    EmptyWidgetContent(configIntent)
+                }
             } else {
+                android.util.Log.d("DayCounterWidget", "WidgetData is null, showing empty content")
                 EmptyWidgetContent(configIntent)
             }
         }

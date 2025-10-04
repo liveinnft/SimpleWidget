@@ -31,11 +31,24 @@ class PhotoWidget : GlanceAppWidget() {
         // Получаем системный ID виджета из GlanceAppWidgetManager
         val glanceAppWidgetManager = androidx.glance.appwidget.GlanceAppWidgetManager(context)
         val systemId = glanceAppWidgetManager.getAppWidgetId(id)
+        android.util.Log.d("PhotoWidget", "GlanceId: $id, SystemId: $systemId")
+        
+        // Попробуем также использовать сам id как системный ID
+        val alternativeSystemId = id.toString()
+        android.util.Log.d("PhotoWidget", "Alternative SystemId: $alternativeSystemId")
 
         val widgetData = withContext(Dispatchers.IO) {
             android.util.Log.d("PhotoWidget", "Looking for widget with systemId: $systemId")
-            val widget = repository.getWidgetBySystemId(systemId.toString())
-            android.util.Log.d("PhotoWidget", "Found widget: $widget")
+            var widget = repository.getWidgetBySystemId(systemId.toString())
+            android.util.Log.d("PhotoWidget", "Found widget with systemId: $widget")
+            
+            // Если не найден, попробуем альтернативный ID
+            if (widget == null) {
+                android.util.Log.d("PhotoWidget", "Trying alternative systemId: $alternativeSystemId")
+                widget = repository.getWidgetBySystemId(alternativeSystemId)
+                android.util.Log.d("PhotoWidget", "Found widget with alternative systemId: $widget")
+            }
+            
             widget
         }
 
@@ -46,7 +59,9 @@ class PhotoWidget : GlanceAppWidget() {
         }
 
         provideContent {
+            android.util.Log.d("PhotoWidget", "WidgetData: $widgetData")
             if (widgetData != null) {
+                android.util.Log.d("PhotoWidget", "Title: ${widgetData.title}, ImageUri: ${widgetData.imageUri}")
                 PhotoWidgetContent(
                     title = widgetData.title,
                     backgroundColor = Color(widgetData.backgroundColor),
@@ -54,6 +69,7 @@ class PhotoWidget : GlanceAppWidget() {
                     configIntent = configIntent
                 )
             } else {
+                android.util.Log.d("PhotoWidget", "WidgetData is null, showing empty content")
                 EmptyWidgetContent(configIntent)
             }
         }

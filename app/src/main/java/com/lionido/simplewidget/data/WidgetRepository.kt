@@ -69,7 +69,15 @@ class WidgetRepository(private val context: Context) {
     }
 
     suspend fun getWidgetBySystemId(systemId: String): WidgetData? {
-        return readWidgetsFromPreferences().find { it.systemWidgetId == systemId }
+        android.util.Log.d("WidgetRepository", "Searching for widget with systemId: $systemId")
+        val widgets = readWidgetsFromPreferences()
+        android.util.Log.d("WidgetRepository", "Total widgets: ${widgets.size}")
+        widgets.forEach { widget ->
+            android.util.Log.d("WidgetRepository", "Widget ${widget.id}: systemWidgetId=${widget.systemWidgetId}")
+        }
+        val found = widgets.find { it.systemWidgetId == systemId }
+        android.util.Log.d("WidgetRepository", "Found widget: $found")
+        return found
     }
 
     suspend fun updateWidgetWithSystemId(widgetId: Int, systemWidgetId: Int) {
