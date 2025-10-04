@@ -119,8 +119,7 @@ private fun DayCounterContent(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                maxLines = 2
             )
 
             Spacer(modifier = GlanceModifier.height(4.dp))
