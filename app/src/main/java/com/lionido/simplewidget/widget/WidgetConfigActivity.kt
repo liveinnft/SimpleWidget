@@ -198,6 +198,7 @@ fun WidgetSelectionCard(
     widget: WidgetData,
     onClick: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()

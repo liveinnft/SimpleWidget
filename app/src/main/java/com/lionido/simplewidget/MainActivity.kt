@@ -158,6 +158,7 @@ fun WidgetCard(
     onEdit: (WidgetData) -> Unit,
     onDelete: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()

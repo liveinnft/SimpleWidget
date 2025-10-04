@@ -27,18 +27,19 @@ class PhotoWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val repository = WidgetRepository(context)
+        
+        // Получаем системный ID виджета из GlanceAppWidgetManager
+        val glanceAppWidgetManager = androidx.glance.appwidget.GlanceAppWidgetManager(context)
+        val systemId = glanceAppWidgetManager.getAppWidgetId(id)
 
         val widgetData = withContext(Dispatchers.IO) {
-            // Получаем системный ID виджета
-            val appWidgetManager = android.appwidget.AppWidgetManager.getInstance(context)
-            val systemId = appWidgetManager.getAppWidgetId(id)
             repository.getWidgetBySystemId(systemId.toString())
         }
 
         // Создаем intent для открытия конфигурации
         val configIntent = Intent(context, WidgetConfigActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetManager.getAppWidgetId(id))
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, systemId)
         }
 
         provideContent {
