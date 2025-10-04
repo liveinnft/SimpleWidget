@@ -19,9 +19,10 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import java.io.File
+import android.graphics.BitmapFactory
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import java.io.File
 import com.lionido.simplewidget.data.WidgetRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -94,17 +95,23 @@ private fun PhotoWidgetContent(
     ) {
         // Если есть изображение, показываем его
         if (imageUri != null) {
-            try {
-                val file = File(imageUri)
-                if (file.exists()) {
+            val file = File(imageUri)
+            if (file.exists()) {
+                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                if (bitmap != null) {
                     Image(
-                        provider = ImageProvider(file),
+                        provider = ImageProvider(bitmap),
                         contentDescription = null,
                         modifier = GlanceModifier.fillMaxSize()
                     )
+                } else {
+                    // Если не удалось загрузить изображение, показываем серый фон
+                    Box(
+                        modifier = GlanceModifier
+                            .fillMaxSize()
+                            .background(ColorProvider(Color.Gray.copy(alpha = 0.3f)))
+                    )
                 }
-            } catch (e: Exception) {
-                android.util.Log.e("PhotoWidget", "Error loading image: $imageUri", e)
             }
         }
 
