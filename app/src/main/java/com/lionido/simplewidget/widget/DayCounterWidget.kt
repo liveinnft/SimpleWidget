@@ -27,28 +27,44 @@ import java.time.temporal.ChronoUnit
 class DayCounterWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val repository = WidgetRepository(context)
+        try {
+            val repository = WidgetRepository(context)
 
-        val widgetData = withContext(Dispatchers.IO) {
-            repository.getWidgetBySystemId(id.toString())
-        }
+            val widgetData = withContext(Dispatchers.IO) {
+                try {
+                    repository.getWidgetBySystemId(id.toString())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
 
-        // Создаем intent для открытия конфигурации
-        val configIntent = Intent(context, WidgetConfigActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
+            // Создаем intent для открытия конфигурации
+            val configIntent = Intent(context, WidgetConfigActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
 
-        provideContent {
-            if (widgetData != null && widgetData.startDate != null) {
-                val days = calculateDays(widgetData.startDate, widgetData.startFromZero)
+            provideContent {
+                if (widgetData != null && widgetData.startDate != null) {
+                    val days = calculateDays(widgetData.startDate, widgetData.startFromZero)
 
-                DayCounterContent(
-                    title = widgetData.title,
-                    days = days,
-                    backgroundColor = Color(widgetData.backgroundColor),
-                    configIntent = configIntent
-                )
-            } else {
+                    DayCounterContent(
+                        title = widgetData.title,
+                        days = days,
+                        backgroundColor = Color(widgetData.backgroundColor),
+                        configIntent = configIntent
+                    )
+                } else {
+                    EmptyWidgetContent(configIntent)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // В случае ошибки показываем пустой виджет
+            val configIntent = Intent(context, WidgetConfigActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            provideContent {
                 EmptyWidgetContent(configIntent)
             }
         }

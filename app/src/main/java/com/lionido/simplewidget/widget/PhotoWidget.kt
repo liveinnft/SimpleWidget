@@ -25,26 +25,42 @@ import kotlinx.coroutines.withContext
 class PhotoWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val repository = WidgetRepository(context)
+        try {
+            val repository = WidgetRepository(context)
 
-        val widgetData = withContext(Dispatchers.IO) {
-            repository.getWidgetBySystemId(id.toString())
-        }
+            val widgetData = withContext(Dispatchers.IO) {
+                try {
+                    repository.getWidgetBySystemId(id.toString())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
 
-        // Создаем intent для открытия конфигурации
-        val configIntent = Intent(context, WidgetConfigActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
+            // Создаем intent для открытия конфигурации
+            val configIntent = Intent(context, WidgetConfigActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
 
-        provideContent {
-            if (widgetData != null) {
-                PhotoWidgetContent(
-                    title = widgetData.title,
-                    backgroundColor = Color(widgetData.backgroundColor),
-                    hasImage = widgetData.imageUri != null,
-                    configIntent = configIntent
-                )
-            } else {
+            provideContent {
+                if (widgetData != null) {
+                    PhotoWidgetContent(
+                        title = widgetData.title,
+                        backgroundColor = Color(widgetData.backgroundColor),
+                        hasImage = widgetData.imageUri != null,
+                        configIntent = configIntent
+                    )
+                } else {
+                    EmptyWidgetContent(configIntent)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // В случае ошибки показываем пустой виджет
+            val configIntent = Intent(context, WidgetConfigActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            provideContent {
                 EmptyWidgetContent(configIntent)
             }
         }
