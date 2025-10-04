@@ -109,7 +109,8 @@ private fun PhotoWidgetContent(
                     Box(
                         modifier = GlanceModifier
                             .fillMaxSize()
-                            .background(ColorProvider(Color.Gray.copy(alpha = 0.3f)))
+                            .background(ColorProvider(Color.Gray.copy(alpha = 0.3f))),
+                        content = {}
                     )
                 }
             }
