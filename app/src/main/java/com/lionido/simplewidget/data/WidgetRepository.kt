@@ -83,11 +83,25 @@ class WidgetRepository(private val context: Context) {
     suspend fun updateWidgetWithSystemId(widgetId: Int, systemWidgetId: Int) {
         android.util.Log.d("WidgetRepository", "Updating widget $widgetId with systemId: $systemWidgetId")
         val list = readWidgetsFromPreferences().toMutableList()
+        android.util.Log.d("WidgetRepository", "Before linking - widgets:")
+        list.forEach { widget ->
+            android.util.Log.d("WidgetRepository", "Widget ${widget.id}: systemWidgetId=${widget.systemWidgetId}")
+        }
+        
         val index = list.indexOfFirst { it.id == widgetId }
         if (index != -1) {
-            list[index] = list[index].copy(systemWidgetId = systemWidgetId.toString())
+            val widget = list[index]
+            android.util.Log.d("WidgetRepository", "Found widget to link: ${widget.id}")
+            list[index] = widget.copy(systemWidgetId = systemWidgetId.toString())
             saveWidgets(list)
             android.util.Log.d("WidgetRepository", "Widget updated successfully")
+            
+            // Проверяем результат
+            val updatedList = readWidgetsFromPreferences()
+            android.util.Log.d("WidgetRepository", "After linking - widgets:")
+            updatedList.forEach { widget ->
+                android.util.Log.d("WidgetRepository", "Widget ${widget.id}: systemWidgetId=${widget.systemWidgetId}")
+            }
         } else {
             android.util.Log.e("WidgetRepository", "Widget with id $widgetId not found!")
         }
@@ -97,11 +111,25 @@ class WidgetRepository(private val context: Context) {
     suspend fun unlinkSystemWidget(systemWidgetId: String) {
         android.util.Log.d("WidgetRepository", "Unlinking widget with systemId: $systemWidgetId")
         val list = readWidgetsFromPreferences().toMutableList()
+        android.util.Log.d("WidgetRepository", "Before unlinking - widgets:")
+        list.forEach { widget ->
+            android.util.Log.d("WidgetRepository", "Widget ${widget.id}: systemWidgetId=${widget.systemWidgetId}")
+        }
+        
         val index = list.indexOfFirst { it.systemWidgetId == systemWidgetId }
         if (index != -1) {
-            list[index] = list[index].copy(systemWidgetId = null)
+            val widget = list[index]
+            android.util.Log.d("WidgetRepository", "Found widget to unlink: ${widget.id}")
+            list[index] = widget.copy(systemWidgetId = null)
             saveWidgets(list)
             android.util.Log.d("WidgetRepository", "Widget unlinked successfully")
+            
+            // Проверяем результат
+            val updatedList = readWidgetsFromPreferences()
+            android.util.Log.d("WidgetRepository", "After unlinking - widgets:")
+            updatedList.forEach { widget ->
+                android.util.Log.d("WidgetRepository", "Widget ${widget.id}: systemWidgetId=${widget.systemWidgetId}")
+            }
         } else {
             android.util.Log.e("WidgetRepository", "Widget with systemId $systemWidgetId not found!")
         }
