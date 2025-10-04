@@ -31,6 +31,7 @@ import com.lionido.simplewidget.data.WidgetRepository
 import com.lionido.simplewidget.data.WidgetType
 import com.lionido.simplewidget.ui.WidgetConfigScreen
 import com.lionido.simplewidget.ui.theme.SimpleWidgetTheme
+import com.lionido.simplewidget.widget.WidgetUpdater
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -139,6 +140,8 @@ fun MainScreen() {
                 onSave = { updatedWidget ->
                     scope.launch {
                         repository.updateWidget(updatedWidget)
+                        // Обновляем виджет на главном экране, если он привязан
+                        WidgetUpdater.updateWidget(context, updatedWidget)
                         selectedWidget = null
                     }
                 },
@@ -191,12 +194,22 @@ fun WidgetCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(
-                        text = widget.title,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column {
+                        Text(
+                            text = widget.title,
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        // Показываем, если виджет привязан к системному виджету
+                        if (widget.systemWidgetId != null) {
+                            Text(
+                                text = "На экране",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
                     IconButton(
                         onClick = onDelete,
                         modifier = Modifier.size(24.dp)

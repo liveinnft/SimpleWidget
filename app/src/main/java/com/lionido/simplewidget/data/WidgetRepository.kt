@@ -37,64 +37,57 @@ class WidgetRepository(private val context: Context) {
         }
     }
 
-    suspend fun addWidget(widget: WidgetData) {
+    private suspend fun saveWidgets(list: List<WidgetData>) {
         context.dataStore.edit { prefs ->
-            val list = readWidgetsFromPreferences().toMutableList()
-            list.add(widget)
             prefs[WIDGETS_KEY] = Json.encodeToString(list)
         }
     }
 
+    suspend fun addWidget(widget: WidgetData) {
+        val list = readWidgetsFromPreferences().toMutableList()
+        list.add(widget)
+        saveWidgets(list)
+    }
+
     suspend fun updateWidget(widget: WidgetData) {
-        context.dataStore.edit { prefs ->
-            val list = readWidgetsFromPreferences().toMutableList()
-            val index = list.indexOfFirst { it.id == widget.id }
-            if (index != -1) {
-                list[index] = widget
-            }
-            prefs[WIDGETS_KEY] = Json.encodeToString(list)
+        val list = readWidgetsFromPreferences().toMutableList()
+        val index = list.indexOfFirst { it.id == widget.id }
+        if (index != -1) {
+            list[index] = widget
+            saveWidgets(list)
         }
     }
 
     suspend fun deleteWidget(id: Int) {
-        context.dataStore.edit { prefs ->
-            val list = readWidgetsFromPreferences().toMutableList()
-            list.removeAll { it.id == id }
-            prefs[WIDGETS_KEY] = Json.encodeToString(list)
-        }
+        val list = readWidgetsFromPreferences().toMutableList()
+        list.removeAll { it.id == id }
+        saveWidgets(list)
     }
 
     suspend fun getWidget(id: Int): WidgetData? {
-        return try {
-            val prefs = context.dataStore.data.first()
-            val json = prefs[WIDGETS_KEY] ?: "[]"
-            val list = Json.decodeFromString<List<WidgetData>>(json)
-            list.find { it.id == id }
-        } catch (e: Exception) {
-            null
-        }
+        return readWidgetsFromPreferences().find { it.id == id }
     }
-    
+
     suspend fun getWidgetBySystemId(systemId: String): WidgetData? {
-        return try {
-            val list = readWidgetsFromPreferences()
-            list.find { it.systemWidgetId.equals(systemId) }
-        } catch (e: Exception) {
-            null
+        return readWidgetsFromPreferences().find { it.systemWidgetId == systemId }
+    }
+
+    suspend fun updateWidgetWithSystemId(widgetId: Int, systemWidgetId: Int) {
+        val list = readWidgetsFromPreferences().toMutableList()
+        val index = list.indexOfFirst { it.id == widgetId }
+        if (index != -1) {
+            list[index] = list[index].copy(systemWidgetId = systemWidgetId.toString())
+            saveWidgets(list)
         }
     }
-    
-    suspend fun updateWidgetWithSystemId(widgetId: Int, systemWidgetId: Int) {
-        context.dataStore.edit { prefs ->
-            val list = readWidgetsFromPreferences().toMutableList()
-            
-            // 更新对应的小部件，添加系统小部件ID
-            val index = list.indexOfFirst { it.id == widgetId }
-            if (index != -1) {
-                list[index] = list[index].copy(systemWidgetId = systemWidgetId.toString())
-            }
-            
-            prefs[WIDGETS_KEY] = Json.encodeToString(list)
+
+    // Отвязать виджет от системного ID
+    suspend fun unlinkSystemWidget(systemWidgetId: String) {
+        val list = readWidgetsFromPreferences().toMutableList()
+        val index = list.indexOfFirst { it.systemWidgetId == systemWidgetId }
+        if (index != -1) {
+            list[index] = list[index].copy(systemWidgetId = null)
+            saveWidgets(list)
         }
     }
 }
