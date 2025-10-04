@@ -28,7 +28,7 @@
         <!-- Активность настройки виджета -->
         <activity
             android:name=".widget.WidgetConfigActivity"
-            android:exported="false"
+            android:exported="true"
             android:theme="@android:style/Theme.Material.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
