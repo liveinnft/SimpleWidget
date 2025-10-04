@@ -39,13 +39,13 @@ fun SystemWidgetDialog(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "选择要关联的小部件",
+                    text = "Выберите виджет для связывания",
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
                 Text(
-                    text = "系统小部件 ID: $systemWidgetId",
+                    text = "ID системного виджета: $systemWidgetId",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
@@ -71,7 +71,7 @@ fun SystemWidgetDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("取消")
+                        Text("Отмена")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
@@ -85,7 +85,7 @@ fun SystemWidgetDialog(
                         },
                         enabled = selectedWidgetId != null
                     ) {
-                        Text("确定")
+                        Text("ОК")
                     }
                 }
             }
@@ -118,7 +118,7 @@ fun WidgetItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 简化的颜色方块显示
+            // Упрощенное отображение цветового блока
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -137,8 +137,8 @@ fun WidgetItem(
                 )
                 Text(
                     text = when (widget.type) {
-                        WidgetType.DAY_COUNTER -> "天数计数器"
-                        WidgetType.PHOTO -> "照片"
+                        WidgetType.DAY_COUNTER -> "Счетчик дней"
+                        WidgetType.PHOTO -> "Фото"
                     },
                     style = MaterialTheme.typography.bodySmall
                 )

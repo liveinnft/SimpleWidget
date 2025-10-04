@@ -89,12 +89,18 @@ class WidgetConfigActivity : ComponentActivity() {
 
             // Принудительно обновляем виджет
             try {
-                val glanceId = GlanceAppWidgetManager(this@WidgetConfigActivity)
-                    .getGlanceIdBy(appWidgetId)
+                val glanceAppWidgetManager = GlanceAppWidgetManager(this@WidgetConfigActivity)
+                val glanceId = glanceAppWidgetManager.getGlanceIdBy(appWidgetId)
                 
                 when (widget.type) {
-                    WidgetType.DAY_COUNTER -> DayCounterWidget().update(this@WidgetConfigActivity, glanceId)
-                    WidgetType.PHOTO -> PhotoWidget().update(this@WidgetConfigActivity, glanceId)
+                    WidgetType.DAY_COUNTER -> {
+                        val dayCounterWidget = DayCounterWidget()
+                        glanceAppWidgetManager.update(dayCounterWidget, glanceId)
+                    }
+                    WidgetType.PHOTO -> {
+                        val photoWidget = PhotoWidget()
+                        glanceAppWidgetManager.update(photoWidget, glanceId)
+                    }
                 }
                 android.util.Log.d("WidgetConfigActivity", "Widget updated successfully")
             } catch (e: Exception) {
@@ -257,13 +263,6 @@ fun WidgetSelectionCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                if (widget.systemWidgetId != null) {
-                    Text(
-                        text = "⚠️ Уже используется",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
             }
         }
     }
