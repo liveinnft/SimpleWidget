@@ -14,6 +14,7 @@ class DayCounterWidgetSmall : GlanceAppWidgetReceiver() {
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
 
+        android.util.Log.d("DayCounterWidgetSmall", "Widget deleted, unlinking: ${appWidgetIds.joinToString()}")
         val repository = WidgetRepository(context)
         CoroutineScope(Dispatchers.IO).launch {
             appWidgetIds.forEach { widgetId ->

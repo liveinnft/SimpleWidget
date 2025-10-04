@@ -73,21 +73,29 @@ class WidgetRepository(private val context: Context) {
     }
 
     suspend fun updateWidgetWithSystemId(widgetId: Int, systemWidgetId: Int) {
+        android.util.Log.d("WidgetRepository", "Updating widget $widgetId with systemId: $systemWidgetId")
         val list = readWidgetsFromPreferences().toMutableList()
         val index = list.indexOfFirst { it.id == widgetId }
         if (index != -1) {
             list[index] = list[index].copy(systemWidgetId = systemWidgetId.toString())
             saveWidgets(list)
+            android.util.Log.d("WidgetRepository", "Widget updated successfully")
+        } else {
+            android.util.Log.e("WidgetRepository", "Widget with id $widgetId not found!")
         }
     }
 
     // Отвязать виджет от системного ID
     suspend fun unlinkSystemWidget(systemWidgetId: String) {
+        android.util.Log.d("WidgetRepository", "Unlinking widget with systemId: $systemWidgetId")
         val list = readWidgetsFromPreferences().toMutableList()
         val index = list.indexOfFirst { it.systemWidgetId == systemWidgetId }
         if (index != -1) {
             list[index] = list[index].copy(systemWidgetId = null)
             saveWidgets(list)
+            android.util.Log.d("WidgetRepository", "Widget unlinked successfully")
+        } else {
+            android.util.Log.e("WidgetRepository", "Widget with systemId $systemWidgetId not found!")
         }
     }
 }

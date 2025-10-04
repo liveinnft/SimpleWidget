@@ -83,19 +83,22 @@ class WidgetConfigActivity : ComponentActivity() {
             val repository = WidgetRepository(this@WidgetConfigActivity)
 
             // Связываем виджет с системным ID
+            android.util.Log.d("WidgetConfigActivity", "Linking widget ${widget.id} with systemId: $appWidgetId")
             repository.updateWidgetWithSystemId(widget.id, appWidgetId)
+            android.util.Log.d("WidgetConfigActivity", "Widget linked successfully")
 
-            // Обновляем виджет
+            // Принудительно обновляем виджет
             try {
                 val glanceId = GlanceAppWidgetManager(this@WidgetConfigActivity)
                     .getGlanceIdBy(appWidgetId)
-
+                
                 when (widget.type) {
                     WidgetType.DAY_COUNTER -> DayCounterWidget().update(this@WidgetConfigActivity, glanceId)
                     WidgetType.PHOTO -> PhotoWidget().update(this@WidgetConfigActivity, glanceId)
                 }
+                android.util.Log.d("WidgetConfigActivity", "Widget updated successfully")
             } catch (e: Exception) {
-                e.printStackTrace()
+                android.util.Log.e("WidgetConfigActivity", "Failed to update widget", e)
             }
 
             // Устанавливаем результат OK

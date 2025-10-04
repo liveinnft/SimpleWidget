@@ -33,9 +33,13 @@ class DayCounterWidget : GlanceAppWidget() {
         // Получаем системный ID виджета из GlanceAppWidgetManager
         val glanceAppWidgetManager = androidx.glance.appwidget.GlanceAppWidgetManager(context)
         val systemId = glanceAppWidgetManager.getAppWidgetId(id)
+        android.util.Log.d("DayCounterWidget", "GlanceId: $id, SystemId: $systemId")
 
         val widgetData = withContext(Dispatchers.IO) {
-            repository.getWidgetBySystemId(systemId.toString())
+            android.util.Log.d("DayCounterWidget", "Looking for widget with systemId: $systemId")
+            val widget = repository.getWidgetBySystemId(systemId.toString())
+            android.util.Log.d("DayCounterWidget", "Found widget: $widget")
+            widget
         }
 
         // Создаем intent для открытия конфигурации
