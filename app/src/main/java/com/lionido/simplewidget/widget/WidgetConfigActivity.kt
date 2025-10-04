@@ -87,6 +87,9 @@ class WidgetConfigActivity : ComponentActivity() {
             repository.updateWidgetWithSystemId(widget.id, appWidgetId)
             android.util.Log.d("WidgetConfigActivity", "Widget linked successfully")
 
+            // Небольшая задержка, чтобы данные успели сохраниться
+            kotlinx.coroutines.delay(100)
+
             // Принудительно обновляем виджет
             try {
                 val glanceAppWidgetManager = GlanceAppWidgetManager(this@WidgetConfigActivity)
@@ -103,6 +106,11 @@ class WidgetConfigActivity : ComponentActivity() {
                     }
                 }
                 android.util.Log.d("WidgetConfigActivity", "Widget updated successfully")
+                
+                // Дополнительно принудительно обновляем через AppWidgetManager
+                val appWidgetManager = AppWidgetManager.getInstance(this@WidgetConfigActivity)
+                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, android.R.id.list)
+                android.util.Log.d("WidgetConfigActivity", "AppWidgetManager notified")
             } catch (e: Exception) {
                 android.util.Log.e("WidgetConfigActivity", "Failed to update widget", e)
             }
