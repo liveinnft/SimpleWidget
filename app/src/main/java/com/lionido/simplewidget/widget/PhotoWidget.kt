@@ -85,7 +85,8 @@ private fun PhotoWidgetContent(
     title: String,
     backgroundColor: Color,
     imageUri: String?,
-    configIntent: Intent
+    configIntent: Intent,
+    widgetSize: String = "medium"
 ) {
     Box(
         modifier = GlanceModifier
@@ -97,8 +98,8 @@ private fun PhotoWidgetContent(
         if (imageUri != null) {
             val file = File(imageUri)
             if (file.exists()) {
-                // Используем сжатую версию изображения для виджета
-                val bitmap = ImageUtils.loadAndResizeBitmap(file.absolutePath, maxWidth = 400, maxHeight = 400)
+                // Используем сжатую версию изображения для виджета с учетом размера
+                val bitmap = ImageUtils.loadAndResizeBitmap(file.absolutePath, widgetSize = widgetSize)
                 if (bitmap != null) {
                     Image(
                         provider = ImageProvider(bitmap),

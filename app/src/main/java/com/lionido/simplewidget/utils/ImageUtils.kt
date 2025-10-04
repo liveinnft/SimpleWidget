@@ -49,31 +49,39 @@ object ImageUtils {
         }
     }
     
-    fun loadAndResizeBitmap(filePath: String, maxWidth: Int = 400, maxHeight: Int = 400): Bitmap? {
+    fun loadAndResizeBitmap(filePath: String, maxWidth: Int = 400, maxHeight: Int = 400, widgetSize: String = "medium"): Bitmap? {
         return try {
             val file = File(filePath)
             if (!file.exists()) return null
-            
+
+            // Определяем размеры в зависимости от размера виджета
+            val (targetWidth, targetHeight) = when (widgetSize.lowercase()) {
+                "small" -> Pair(200, 200)   // 2x1 виджет
+                "medium" -> Pair(300, 300)  // 3x1 виджет
+                "large" -> Pair(400, 400)  // 4x1 виджет
+                else -> Pair(maxWidth, maxHeight)
+            }
+
             // Сначала получаем размеры изображения без загрузки в память
             val options = BitmapFactory.Options().apply {
                 inJustDecodeBounds = true
             }
             BitmapFactory.decodeFile(filePath, options)
-            
+
             // Вычисляем коэффициент масштабирования
-            val scaleFactor = calculateInSampleSize(options, maxWidth, maxHeight)
-            
+            val scaleFactor = calculateInSampleSize(options, targetWidth, targetHeight)
+
             // Загружаем изображение с нужным масштабированием
             val loadOptions = BitmapFactory.Options().apply {
                 inSampleSize = scaleFactor
                 inJustDecodeBounds = false
             }
-            
+
             val bitmap = BitmapFactory.decodeFile(filePath, loadOptions)
-            
+
             // Дополнительно масштабируем если нужно
-            if (bitmap != null && (bitmap.width > maxWidth || bitmap.height > maxHeight)) {
-                val scaledBitmap = scaleBitmap(bitmap, maxWidth, maxHeight)
+            if (bitmap != null && (bitmap.width > targetWidth || bitmap.height > targetHeight)) {
+                val scaledBitmap = scaleBitmap(bitmap, targetWidth, targetHeight)
                 bitmap.recycle() // Освобождаем память
                 scaledBitmap
             } else {

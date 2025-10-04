@@ -116,18 +116,20 @@ private fun DayCounterContent(
                 text = title,
                 style = TextStyle(
                     color = ColorProvider(Color.White),
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = GlanceModifier.height(8.dp))
+            Spacer(modifier = GlanceModifier.height(4.dp))
 
             Text(
                 text = "$days",
                 style = TextStyle(
                     color = ColorProvider(Color.White),
-                    fontSize = 36.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -136,7 +138,7 @@ private fun DayCounterContent(
                 text = "дней",
                 style = TextStyle(
                     color = ColorProvider(Color.White),
-                    fontSize = 12.sp
+                    fontSize = 10.sp
                 )
             )
         }
