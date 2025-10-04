@@ -95,11 +95,11 @@ class WidgetConfigActivity : ComponentActivity() {
                 when (widget.type) {
                     WidgetType.DAY_COUNTER -> {
                         val dayCounterWidget = DayCounterWidget()
-                        glanceAppWidgetManager.update(dayCounterWidget, glanceId)
+                        dayCounterWidget.update(this@WidgetConfigActivity, glanceId)
                     }
                     WidgetType.PHOTO -> {
                         val photoWidget = PhotoWidget()
-                        glanceAppWidgetManager.update(photoWidget, glanceId)
+                        photoWidget.update(this@WidgetConfigActivity, glanceId)
                     }
                 }
                 android.util.Log.d("WidgetConfigActivity", "Widget updated successfully")
