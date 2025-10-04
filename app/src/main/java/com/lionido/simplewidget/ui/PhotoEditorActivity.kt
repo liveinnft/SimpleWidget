@@ -91,6 +91,7 @@ fun PhotoEditorScreen(
     onSave: (String) -> Unit,
     onCancel: () -> Unit
 ) {
+    val context = LocalContext.current
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -112,7 +113,7 @@ fun PhotoEditorScreen(
     LaunchedEffect(imageUri) {
         try {
             val bitmap = withContext(Dispatchers.IO) {
-                loadBitmapFromUri(LocalContext.current, imageUri)
+                loadBitmapFromUri(context, imageUri)
             }
             imageBitmap = bitmap?.asImageBitmap()
             isLoading = false
@@ -152,7 +153,7 @@ fun PhotoEditorScreen(
                                 offsetY = offsetY,
                                 frameWidth = frameWidth,
                                 frameHeight = frameHeight,
-                                context = LocalContext.current
+                                context = context
                             )
                             onSave(croppedPath)
                         }
