@@ -73,8 +73,8 @@ class PhotoWidget : GlanceAppWidget() {
                     configIntent = configIntent
                 )
             } else {
-                android.util.Log.d("PhotoWidget", "WidgetData is null, showing empty content")
-                EmptyWidgetContent(configIntent)
+                android.util.Log.d("PhotoWidget", "WidgetData is null, showing configuration prompt")
+                ConfigurationPromptContent(configIntent)
             }
         }
     }
@@ -150,6 +150,40 @@ private fun PhotoWidgetContent(
                     )
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ConfigurationPromptContent(configIntent: Intent) {
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .background(ColorProvider(Color(0xFF6200EE)))
+            .clickable(actionStartActivity(configIntent))
+            .padding(12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Нажмите для настройки",
+                style = TextStyle(
+                    color = ColorProvider(Color.White),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Spacer(modifier = GlanceModifier.height(4.dp))
+            Text(
+                text = "Фото виджет",
+                style = TextStyle(
+                    color = ColorProvider(Color.White.copy(alpha = 0.8f)),
+                    fontSize = 12.sp
+                )
+            )
         }
     }
 }
