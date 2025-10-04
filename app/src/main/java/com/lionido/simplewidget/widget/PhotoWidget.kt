@@ -20,9 +20,9 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import java.io.File
-import android.graphics.BitmapFactory
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import com.lionido.simplewidget.utils.ImageUtils
 import com.lionido.simplewidget.data.WidgetRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -97,7 +97,8 @@ private fun PhotoWidgetContent(
         if (imageUri != null) {
             val file = File(imageUri)
             if (file.exists()) {
-                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                // Используем сжатую версию изображения для виджета
+                val bitmap = ImageUtils.loadAndResizeBitmap(file.absolutePath, maxWidth = 400, maxHeight = 400)
                 if (bitmap != null) {
                     Image(
                         provider = ImageProvider(bitmap),
